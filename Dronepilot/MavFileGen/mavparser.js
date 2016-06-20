@@ -39,6 +39,7 @@ var MAV_CMD = {
   },
   MAV_CMD_VIDEO_START_CAPTURE: {
     cmd: 2500,
+
     camera_id: 0.0,
     /*Camera ID */
     fps: 30.00,
@@ -51,6 +52,7 @@ var MAV_CMD = {
     /*Empty*/
     empty_3: 0.0,
     /*Empty*/
+    empty_4: 0.0,
 
   },
   MAV_CMD_VIDEO_STOP_CAPTURE: {
