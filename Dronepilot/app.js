@@ -7,27 +7,81 @@ var path = require('path');
 var config = require('./config.js');
 var request = require('request');
 
+var bebop = require('node-bebop')
+var drone = bebop.createClient();
 var CronJob = require('cron').CronJob;
 
 new CronJob("*/3 * * * * *", function() {
     console.log("DEBUG: sending random battery!");
-        battery=Math.floor(Math.random() * 101);
-        io.emit('battery-data', battery);
+    battery = Math.floor(Math.random() * 101);
+    io.emit('battery-data', battery);
 
 }, null, true);
 
 new CronJob("*/15 * * * * *", function() {
     console.log("DEBUG: sending random state!");
-        availablestates = ["ready", "crashed", "hovering", "landed"];
-        choosenstate=Math.floor(Math.random()*availablestates.length);
+    availablestates = drone.Common.allStates();
+    choosenstate = Math.floor(Math.random() * availablestates.length);
 
-        newstate = availablestates[choosenstate];
-        io.emit('dronestate-data', newstate);
+    newstate = availablestates[choosenstate];
+    io.emit('dronestate-data', String(newstate));
 
 }, null, true);
 
+new CronJob("*/4 * * * * *", function() {
+    console.log("DEBUG: sending fake gps!");
+    availablegps = [];
+    availablegps.push([52.143147, 7.329341]);
+    availablegps.push([52.143140, 7.326836]);
+    availablegps.push([52.1475281, 7.3379673]);
+    availablegps.push([52.1475381, 7.3379273]);
+    availablegps.push([52.1475081, 7.3372673]);
+    choosengps = Math.floor(Math.random() * availablegps.length);
+
+    newgps = availablegps[choosengps];
+    io.emit('gps-data', newgps);
+
+}, null, true);
+
+
+// Signal landed and flying events.
+drone.on('landing', function() {
+    console.log('LANDING');
+    stateData = 'Landing';
+    sendState();
+});
+drone.on('landed', function() {
+    console.log('LANDED');
+    stateData = 'Landed';
+    sendState();
+});
+drone.on('takeoff', function() {
+    console.log('TAKEOFF');
+    stateData = 'TakeOFF';
+    sendState();
+});
+
+drone.on('hovering', function() {
+    console.log('HOVERING');
+    stateData = 'Hovering';
+    sendState();
+});
+drone.on('flying', function() {
+    console.log('FLYING');
+    stateData = 'Flying';
+    sendState();
+});
+
+// Signal GPS change
+drone.on("PositionChanged", function(data) {
+    console.log("DRONE-GPS got " + data);
+    io.sockets.emit('gps-data', data);
+});
+
 var myData = {};
 var fieldData = {};
+
+var stateData = 'Ready';
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -37,22 +91,17 @@ app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
-app.get('/dashboard', function(req, res) {
-    res.sendFile(path.join(__dirname, 'views/dashboard.html'));
-});
-
 app.get('/list', function(req, res) {
     res.sendFile(path.join(__dirname, 'views/fieldlist.html'));
 });
 
-app.get('/field/:id', function(req,res){
-  res.sendFile(path.join(__dirname, 'views/field.html'));
+app.get('/field/:id', function(req, res) {
+    id = req.params.id;
+    doConvert(fieldData[id].coordinates);
+    res.sendFile(path.join(__dirname, 'views/field.html'));
 });
 
 io.on('connection', function(socket) {
-    if (socket.handshake.headers.referer.indexOf(config.host + config.dashboardEndpoint) > -1) {
-        io.emit('update-data', myData);
-    }
     io.emit('fields-data', fieldData);
     socket.on('create-testdata', function(data) {
         myData = data;
@@ -60,6 +109,15 @@ io.on('connection', function(socket) {
     });
     socket.on('disconnect', function() {});
 });
+
+function sendState() {
+    console.log('DEBUG: sending new STATE: ' + stateData);
+    io.emit('dronestate-data', stateData)
+}
+
+function doConvert(coordinates) {
+    console.log("TODO: convertStuff: " + coordinates);
+}
 
 new CronJob("*/5 * * * * *", function() {
     console.log("DEBUG: refreshing field list...");

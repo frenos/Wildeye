@@ -13,6 +13,17 @@ var map = L.map('map', {
     })
     .setView([52.14227, 7.32899], 17);
 
+var marker;
+
+function updateMarker(lat, lng){
+  console.log("updateMarker?");
+      zoom = 12;
+      if (marker)
+        map.removeLayer(marker);
+      marker = L.marker([lat, lng],{}).addTo(map);
+      map.panTo([lat,lng], zoom);
+}
+
 var vm = new Vue({
   el: '#app',
   data: {
@@ -30,6 +41,7 @@ var vm = new Vue({
 
     socket.on('gps-data', function(data){
       this.gps = data;
+      updateMarker(this.gps[0],this.gps[1]);
     }.bind(this));
 
     socket.on('dronestate-data', function(data){

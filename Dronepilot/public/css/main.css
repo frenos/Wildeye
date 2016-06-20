@@ -451,6 +451,17 @@ body .demo-blog {
     background-color: #DEDCDC;
 }
 
+.droneicon {
+    width: 44px;
+    height: 44px;
+    background-image: url('../images/drone.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 75%;
+    border-radius: 22px;
+    background-color: #DEDCDC;
+}
+
 .gpsicon {
     width: 44px;
     height: 44px;
