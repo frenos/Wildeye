@@ -41,11 +41,13 @@ var vm = new Vue({
 
     socket.on('gps-data', function(data){
       this.gps = data;
-      updateMarker(this.gps[0],this.gps[1]);
+      updateMarker(this.gps['latitude'],this.gps['longitude']);
     }.bind(this));
 
     socket.on('dronestate-data', function(data){
       this.dronestate = data;
     }.bind(this));
+
+    socket.emit('connect-drone', "");
   }
 });

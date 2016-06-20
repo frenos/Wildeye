@@ -11,39 +11,47 @@ var bebop = require('node-bebop')
 var drone = bebop.createClient();
 var CronJob = require('cron').CronJob;
 
-new CronJob("*/3 * * * * *", function() {
-    console.log("DEBUG: sending random battery!");
-    battery = Math.floor(Math.random() * 101);
-    io.emit('battery-data', battery);
+var fakedata = false;
 
-}, null, true);
+if (fakedata == true) {
+    new CronJob("*/3 * * * * *", function() {
+        console.log("DEBUG: sending random battery!");
+        battery = Math.floor(Math.random() * 101);
+        io.emit('battery-data', battery);
 
-new CronJob("*/15 * * * * *", function() {
-    console.log("DEBUG: sending random state!");
-    availablestates = drone.Common.allStates();
-    choosenstate = Math.floor(Math.random() * availablestates.length);
+    }, null, true);
 
-    newstate = availablestates[choosenstate];
-    io.emit('dronestate-data', String(newstate));
+    new CronJob("*/15 * * * * *", function() {
+        console.log("DEBUG: sending random state!");
+        availablestates = drone.Common.allStates();
+        choosenstate = Math.floor(Math.random() * availablestates.length);
 
-}, null, true);
+        newstate = availablestates[choosenstate];
+        io.emit('dronestate-data', String(newstate));
 
-new CronJob("*/4 * * * * *", function() {
-    console.log("DEBUG: sending fake gps!");
-    availablegps = [];
-    availablegps.push([52.143147, 7.329341]);
-    availablegps.push([52.143140, 7.326836]);
-    availablegps.push([52.1475281, 7.3379673]);
-    availablegps.push([52.1475381, 7.3379273]);
-    availablegps.push([52.1475081, 7.3372673]);
-    choosengps = Math.floor(Math.random() * availablegps.length);
+    }, null, true);
 
-    newgps = availablegps[choosengps];
-    io.emit('gps-data', newgps);
+    new CronJob("*/4 * * * * *", function() {
+        console.log("DEBUG: sending fake gps!");
+        availablegps = [];
+        availablegps.push([52.143147, 7.329341]);
+        availablegps.push([52.143140, 7.326836]);
+        availablegps.push([52.1475281, 7.3379673]);
+        availablegps.push([52.1475381, 7.3379273]);
+        availablegps.push([52.1475081, 7.3372673]);
+        choosengps = Math.floor(Math.random() * availablegps.length);
 
-}, null, true);
+        newgps = availablegps[choosengps];
+        io.emit('gps-data', newgps);
 
+    }, null, true);
 
+}
+
+//Signal on Batterychange
+drone.on('battery', function(data) {
+    io.emit('battery-data', data);
+});
 // Signal landed and flying events.
 drone.on('landing', function() {
     console.log('LANDING');
@@ -74,7 +82,7 @@ drone.on('flying', function() {
 
 // Signal GPS change
 drone.on("PositionChanged", function(data) {
-    console.log("DRONE-GPS got " + data);
+    console.log("DRONE-GPS got " + JSON.stringify(data));
     io.sockets.emit('gps-data', data);
 });
 
@@ -106,6 +114,11 @@ io.on('connection', function(socket) {
     socket.on('create-testdata', function(data) {
         myData = data;
         io.emit('update-data', myData);
+    });
+    socket.on('connect-drone', function(data){
+      drone.connect(function(){
+
+      });
     });
     socket.on('disconnect', function() {});
 });

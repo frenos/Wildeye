@@ -29,10 +29,10 @@
     <link rel="canonical" href="http://www.example.com/">
     -->
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.brown-deep_orange.min.css">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link rel="stylesheet" href="../css/fonts.css">
+    <link rel="stylesheet" href="../css/icons.css">
+    <link rel="stylesheet" href="../css/material.brown-deep_orange.min.css">
+    <link rel="stylesheet" href="../css/leaflet.css" />
     <link rel="stylesheet" href="../css/main.css">
 </head>
 
@@ -77,8 +77,8 @@
                             <div><h2 class="mdl-card__title-text">GPS</h2></div>
                         </div>
                         <div class="mdl-card__supporting-text">
-                            <h3>{{ gps[0] }}</h3>
-                            <h3>{{ gps[1] }}</h3>
+                            <h3>{{ gps['longitude'] }}</h3>
+                            <h3>{{ gps['latitude'] }}</h3>
                         </div>
                     </div>
                     <nav class="mdl-cell mdl-cell--12-col">
@@ -106,9 +106,9 @@
             </div>
         </main>
     </div>
-    <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.17/vue.js"></script>
-    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="../js/material.min.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="../js/leaflet.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="../js/field.js"></script>
 </body>
