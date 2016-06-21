@@ -6,6 +6,7 @@ var io = require('socket.io')(http)
 var path = require('path');
 var config = require('./config.js');
 var request = require('request');
+var atob = require('atob');
 
 var bebop = require('node-bebop')
 var drone = bebop.createClient();
@@ -48,48 +49,60 @@ if (fakedata == true) {
 
 }
 
-//Signal on Batterychange
-drone.on('battery', function(data) {
-    io.emit('battery-data', data);
-});
-// Signal landed and flying events.
-drone.on('landing', function() {
-    console.log('LANDING');
-    stateData = 'Landing';
-    sendState();
-});
-drone.on('landed', function() {
-    console.log('LANDED');
-    stateData = 'Landed';
-    sendState();
-});
-drone.on('takeoff', function() {
-    console.log('TAKEOFF');
-    stateData = 'TakeOFF';
-    sendState();
-});
+drone.connect(function() {
 
-drone.on('hovering', function() {
-    console.log('HOVERING');
-    stateData = 'Hovering';
-    sendState();
-});
-drone.on('flying', function() {
-    console.log('FLYING');
-    stateData = 'Flying';
-    sendState();
-});
+    drone.MediaStreaming.videoEnable(1);
+    //Signal on Batterychange
+    drone.on('battery', function(data) {
+        console.log("DEBUG sending battery: "+data+" %...");
+        batteryData=data;
+        io.emit('battery-data', batteryData);
+    });
+    // Signal landed and flying events.
+    drone.on('landing', function() {
+        console.log('LANDING');
+        stateData = 'Landing';
+        sendState();
+    });
+    drone.on('landed', function() {
+        console.log('LANDED');
+        stateData = 'Landed';
+        sendState();
+    });
+    drone.on('takeoff', function() {
+        console.log('TAKEOFF');
+        stateData = 'TakeOFF';
+        sendState();
+    });
 
-// Signal GPS change
-drone.on("PositionChanged", function(data) {
-    console.log("DRONE-GPS got " + JSON.stringify(data));
-    io.sockets.emit('gps-data', data);
+    drone.on('hovering', function() {
+        console.log('HOVERING');
+        stateData = 'Hovering';
+        sendState();
+    });
+    drone.on('flying', function() {
+        console.log('FLYING');
+        stateData = 'Flying';
+        sendState();
+    });
+
+    // Signal GPS change
+    drone.on("PositionChanged", function(data) {
+        console.log("DRONE-GPS got " + JSON.stringify(data));
+        io.sockets.emit('gps-data', data);
+    });
+
+    drone.on('video', function(data) {
+        console.log('sending video data');
+        io.emit('video-data', data.toString('base64'));
+    });
 });
 
 var myData = {};
 var fieldData = {};
 
 var stateData = 'Ready';
+var batteryData = 0;
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -111,15 +124,17 @@ app.get('/field/:id', function(req, res) {
 
 io.on('connection', function(socket) {
     io.emit('fields-data', fieldData);
+    io.emit('battery-data',batteryData);
+    sendState();
     socket.on('create-testdata', function(data) {
         myData = data;
         io.emit('update-data', myData);
     });
-    socket.on('connect-drone', function(data){
-      drone.connect(function(){
 
-      });
+    socket.on('connect-drone', function(data) {
+        console.log("Got connect-drone...");
     });
+
     socket.on('disconnect', function() {});
 });
 
