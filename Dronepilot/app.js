@@ -70,7 +70,7 @@ if (fakedata == true) {
 
 drone.connect(function() {
 
-    //drone.MediaStreaming.videoEnable(1);
+    drone.MediaStreaming.videoEnable(1);
     //Signal on Batterychange
     drone.on('battery', function(data) {
         console.log("DEBUG sending battery: " + data + " %...");
@@ -127,7 +127,7 @@ drone.connect(function() {
 
 var myData = {};
 var fieldData = {};
-var readyToFly = true;
+var readyToFly = false;
 var stateData = 'Ready';
 var batteryData = 0;
 
@@ -172,11 +172,11 @@ io.on('connection', function(socket) {
             }
         }
 
-        var mavparser = new mavLink.MavParser(job.coordinates, 'mavlink/flightplan', 1);
+        var mavparser = new mavLink.MavParser(job.coordinates, 'mavlink/flightPlan', 1);
         mavparser.startparse();
 
         client.connect(function() {
-            client.upload(['mavlink/flightplan.mavlink'], '/internal_000/flightplans', {
+            client.upload(['mavlink/flightPlan.mavlink'], '/internal_000/flightplans', {
                 baseDir: 'mavlink',
                 overwrite: 'all'
             }, function(result) {
@@ -184,7 +184,8 @@ io.on('connection', function(socket) {
             });
         });
 
-        readyToFly = false;
+        readyToFly = true;
+          drone.Mavlink.start("/data/ftp/internal_000/flightplans/flightPlan.mavlink", 0);
     });
 
     socket.on('stop-button', function(data) {
