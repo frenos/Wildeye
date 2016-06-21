@@ -25,7 +25,7 @@ var ftpClient = require('ftp-client'),
     },
     client = new ftpClient(config, options);
 
->>>>>>> b0aba2b2da18760347df30901db1394dd462cbfd
+
 var bebop = require('node-bebop')
 var drone = bebop.createClient();
 var CronJob = require('cron').CronJob;
