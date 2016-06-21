@@ -92,5 +92,8 @@ var vm = new Vue({
       stopBtn: function(event){
         socket.emit('stop-button', jobId);
       },
+      landBtn: function(event){
+        socket.emit('land-button', jobId);
+      },
     }
 });

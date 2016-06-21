@@ -54,18 +54,20 @@
                 <div id="app" class="mdl-grid demo-blog__posts">
                     <div class="mdl-card mdl-cell mdl-cell--2-col mdl-shadow--8dp mdl-card-border">
                         <div class="mdl-card__title">
-                          <div class="droneicon"></div>
-                            <div><h2 class="mdl-card__title-text">Drone State</h2></div>
+                            <div class="droneicon"></div>
+                            <div>
+                                <h2 class="mdl-card__title-text">Drone State</h2></div>
                         </div>
                         <div class="mdl-card__supporting-text">
-                          <h1>  {{ dronestate }}</h1>
+                            <h1>  {{ dronestate }}</h1>
                         </div>
                     </div>
 
                     <div class="mdl-card mdl-cell mdl-cell--2-col mdl-shadow--8dp mdl-card-border">
                         <div class="mdl-card__title">
                             <div class="batteryicon"></div>
-                            <div><h2 class="mdl-card__title-text">Battery</h2></div>
+                            <div>
+                                <h2 class="mdl-card__title-text">Battery</h2></div>
                         </div>
                         <div class="mdl-card__supporting-text">
                             <h1>{{ battery }}%</h1>
@@ -74,7 +76,8 @@
                     <div class="mdl-card mdl-cell mdl-cell--2-col mdl-shadow--8dp mdl-card-border">
                         <div class="mdl-card__title">
                             <div class="gpsicon"></div>
-                            <div><h2 class="mdl-card__title-text">GPS</h2></div>
+                            <div>
+                                <h2 class="mdl-card__title-text">GPS</h2></div>
                         </div>
                         <div class="mdl-card__supporting-text">
                             <h3>{{ gps['longitude'] }}</h3>
@@ -83,12 +86,24 @@
                     </div>
                     <div class="mdl-card mdl-cell mdl-cell--2-col mdl-shadow--8dp mdl-card-border">
                         <div class="mdl-card__title">
-                            <div class="controlicon"></div>
-                            <div><h2 class="mdl-card__title-text">Drone Control</h2></div>
+                            <div class="gpsicon"></div>
+                            <div>
+                                <h2 class="mdl-card__title-text">Drone Control</h2></div>
                         </div>
                         <div class="mdl-card__supporting-text">
-                            <button class="mdl-button mdl-js-button mdl-button--colored mdl-button--raised mdl-js-ripple-effect" v-on:click="startBtn"><div class="takeofficon" style="width:50px"></div></span></button>
-                            <button class="mdl-button mdl-js-button mdl-button--colored mdl-button--raised mdl-js-ripple-effect" v-on:click="stopBtn"><div class="landingicon" style="width:50px"></div></span></button>
+                            <button class="mdl-button mdl-js-button mdl-button--colored mdl-button--raised mdl-js-ripple-effect" v-on:click="startBtn">
+                                <div class="takeofficon" style="width:50px"></div>
+                                </span>
+                            </button>
+                            <button class="mdl-button mdl-js-button mdl-button--accent mdl-button--raised mdl-js-ripple-effect" v-on:click="stopBtn">
+                                <div class="landingicon" style="width:50px"></div>
+                                </span>
+                            </button>
+                            <button class="mdl-button mdl-js-button mdl-button--colored mdl-button--raised mdl-js-ripple-effect" v-on:click="landBtn">
+                                <div class="landingicon" style="width:50px"></div>
+                                </span>
+                            </button>
+
                         </div>
                     </div>
                     <nav class="mdl-cell mdl-cell--12-col">
@@ -96,8 +111,9 @@
                     </nav>
                     <div class="mdl-card mdl-cell mdl-cell--6-col mdl-shadow--8dp mdl-card-border wildeye-mapcard">
                         <div class="mdl-card__title">
-                          <div class="mapicon"></div>
-                            <div><h2 class="mdl-card__title-text">Mapview</h2></div>
+                            <div class="mapicon"></div>
+                            <div>
+                                <h2 class="mdl-card__title-text">Mapview</h2></div>
                         </div>
                         <div class=" mdl-card__media" id="map">
 
@@ -105,8 +121,9 @@
                     </div>
                     <div class="mdl-card mdl-cell mdl-cell--6-col mdl-shadow--8dp mdl-card-border">
                         <div class="mdl-card__title">
-                          <div class="videoicon"></div>
-                            <div><h2 class="mdl-card__title-text">LiveVideo</h2></div>
+                            <div class="videoicon"></div>
+                            <div>
+                                <h2 class="mdl-card__title-text">LiveVideo</h2></div>
                         </div>
                         <div id="vidstream">
 
