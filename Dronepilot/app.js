@@ -178,6 +178,11 @@ io.on('connection', function(socket) {
             });
         });
     });
+    socket.on('stop-button', function (data) {
+      console.log("!!!!!!!!! WE GOT EMERGENCY!!! ABORT SHIP!!!!")
+      drone.emergency();
+    });
+
 });
 
 function sendState() {
