@@ -81,5 +81,13 @@ var vm = new Vue({
             player.decode(toUint8Array(data));
         });
         socket.emit('connect-drone', "");
+    },
+    methods: {
+      startBtn: function(event){
+        var pathArray = window.location.pathname.split( '/' );
+        jobId = pathArray[pathArray.length-1];
+        console.log("sending jobid "+jobId);
+        socket.emit('start-button', jobId);
+      }
     }
 });
