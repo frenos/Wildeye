@@ -9,12 +9,14 @@ var request = require('request');
 var atob = require('atob');
 var fileIO = require("fs");
 var ftpClient = require('ftp-client');
-
+var mavLink = require('./MavFileGen/mavparser');
+console.log(mavLink);
 var bebop = require('node-bebop')
 var drone = bebop.createClient();
 var CronJob = require('cron').CronJob;
 
 var fakedata = false;
+
 
 if (fakedata == true) {
     new CronJob("*/3 * * * * *", function() {
@@ -121,6 +123,7 @@ app.get('/list', function(req, res) {
 app.get('/field/:id', function(req, res) {
     id = req.params.id;
     doConvert(fieldData[id].coordinates);
+
     res.sendFile(path.join(__dirname, 'views/field.html'));
 });
 

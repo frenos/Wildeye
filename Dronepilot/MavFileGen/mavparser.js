@@ -1,7 +1,8 @@
 /**
 Autor: Peter Weßeler
 */
-var MAV_CMD = {
+
+exports.MAV_CMD = {
 
   MAV_CMD_NAV_WAYPOINT: {
     cmd: 16,
@@ -17,7 +18,7 @@ var MAV_CMD = {
     /*Latitude*/
     long: 7.327172,
     /*Longitude*/
-    alt: 3,
+    alt: 1,
     /*Altitude in meter */
   },
   MAV_CMD_NAV_LAND: {
@@ -71,11 +72,19 @@ var MAV_CMD = {
     /*Empty*/
     empty_7: 0.0,
     /*Empty*/
+  },
+  MAV_CMD_NAV_LAND_LOCAL: {
+    cmd: 23,
+    landing_target: 0.0,
+    /*Landing target number (if available)*/
+    max_offset: 0.0,
+    ///:TODO
   }
+
 };
 
 
-var MavParser = function(coordinates, filename, altitude, jobname) {
+exports.MavParser = function(coordinates, filename, altitude, jobname) {
   this.coordinates = coordinates;
   this.filename = filename;
   this.altitude = altitude;
@@ -83,14 +92,14 @@ var MavParser = function(coordinates, filename, altitude, jobname) {
   this.objectValues = require('object-values');
   this.mavWayPoints = [];
   this.writer = {};
-  this.mavLand = MAV_CMD.MAV_CMD_NAV_LAND;
-  this.mavCamOn = MAV_CMD.MAV_CMD_VIDEO_START_CAPTURE;
-  this.mavCamOff = MAV_CMD.MAV_CMD_VIDEO_STOP_CAPTURE;
+  this.mavLand = exports.MAV_CMD.MAV_CMD_NAV_LAND;
+  this.mavCamOn = exports.MAV_CMD.MAV_CMD_VIDEO_START_CAPTURE;
+  this.mavCamOff = exports.MAV_CMD.MAV_CMD_VIDEO_STOP_CAPTURE;
   this.index = 0;
 };
-MavParser.prototype.genMavLinkwaypointObj = function() {
-  var waypoint_ar = this.coordinates.coordinates;
-  var waypointobj = MAV_CMD.MAV_CMD_NAV_WAYPOINT;
+exports.MavParser.prototype.genMavLinkwaypointObj = function() {
+  var waypoint_ar = this.coordinates;
+  var waypointobj = exports.MAV_CMD.MAV_CMD_NAV_WAYPOINT;
   var value = [];
   for (var i = 0; i < waypoint_ar.length; i++) {
     value = this.objectValues(waypoint_ar[i]);
@@ -99,22 +108,22 @@ MavParser.prototype.genMavLinkwaypointObj = function() {
     this.mavWayPoints.push(waypointobj);
   }
   this.mavLand.lat = value[0];
-  this.mavLand.long  = value[1];
+  this.mavLand.long = value[1];
   //console.log(this.mavWayPoints);
 
 };
-MavParser.prototype.startparse = function() {
+exports.MavParser.prototype.startparse = function() {
   this.writer = this.fileIO.createWriteStream(this.filename + '.mavlink');
   this.writer.write("QGC WPL 120\n");
   this.genMavLinkwaypointObj();
   this.start();
 };
-MavParser.prototype.closeFile = function() {
+exports.MavParser.prototype.closeFile = function() {
   this.writer.end();
 };
-MavParser.prototype.writeMAVCMD = function(mavcmd) {
+exports.MavParser.prototype.writeMAVCMD = function(mavcmd) {
   var values = this.objectValues(mavcmd);
-  this.writer.write(this.index + "\t0\t3\t"+values[0]+"\t");
+  this.writer.write(this.index + "\t0\t3\t" + values[0] + "\t");
   for (var i = 1; i < values.length; i++) {
     this.writer.write(parseFloat(values[i]).toFixed(6) + "\t");
   }
@@ -122,59 +131,26 @@ MavParser.prototype.writeMAVCMD = function(mavcmd) {
   this.writer.write("1\n");
 
 };
-MavParser.prototype.start = function () {
+exports.MavParser.prototype.start = function() {
   this.writeMAVCMD(this.mavCamOn);
   this.writeWaypoints();
 };
-MavParser.prototype.writeWaypoints = function() {
+exports.MavParser.prototype.writeWaypoints = function() {
 
   for (var i = 0; i < this.mavWayPoints.length; i++) {
     this.writeMAVCMD(this.mavWayPoints[i]);
   }
   this.endparse();
 };
-MavParser.prototype.endparse = function () {
+exports.MavParser.prototype.endparse = function() {
   this.writeMAVCMD(this.mavLand);
   this.writeMAVCMD(this.mavCamOff);
   this.closeFile();
 };
-MavParser.prototype.mavlinkCMD_NAV = function(args) {
 
-};
-var coordinates = {
-  "coordinates": [{
-    "lat": 52.14287813929325,
-    "lng": 7.327172756195068
-  }, {
-    "lat": 52.142535758134684,
-    "lng": 7.327752113342285
-  }, {
-    "lat": 52.142535758134684,
-    "lng": 7.328363656997681
-  }, {
-    "lat": 52.142739870296076,
-    "lng": 7.328599691390991
-  }, {
-    "lat": 52.14299007102416,
-    "lng": 7.328814268112183
-  }, {
-    "lat": 52.143220517819614,
-    "lng": 7.328417301177978
-  }, {
-    "lat": 52.14345096342262,
-    "lng": 7.327966690063476
-  }, {
-    "lat": 52.143503636535854,
-    "lng": 7.327558994293212
-  }, {
-    "lat": 52.14329294370905,
-    "lng": 7.327269315719604
-  }, {
-    "lat": 52.14304274468254,
-    "lng": 7.3269689083099365
-  }]
-};
-var mavpaser = new MavParser(coordinates, 'test', 3, 'year');
+
+/*
+var mavpaser = new MavParser(coordinates, 'flightPlan', 3, 'year');
 mavpaser.startparse();
 console.log("test");
 
