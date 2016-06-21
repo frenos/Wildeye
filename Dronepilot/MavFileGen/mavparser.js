@@ -12,7 +12,7 @@ exports.MAV_CMD = {
     /*Acceptance radius in meters (if the sphere with this radius is hit, the MISSION counts as reached)*/
     pass_through: 0.0,
     /*0 to pass through the WP, if > 0 radius in meters to pass by WP. Positive value for clockwise orbit, negative value for counter-clockwise orbit. Allows trajectory control.*/
-    yaw_angle: 180.0,
+    yaw_angle: 360.0,
     /*Desired yaw angle at MISSION (rotary wing)*/
     lat: 57.323,
     /*Latitude*/
