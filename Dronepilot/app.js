@@ -73,8 +73,8 @@ drone.connect(function() {
     //drone.MediaStreaming.videoEnable(1);
     //Signal on Batterychange
     drone.on('battery', function(data) {
-        console.log("DEBUG sending battery: "+data+" %...");
-        batteryData=data;
+        console.log("DEBUG sending battery: " + data + " %...");
+        batteryData = data;
         io.emit('battery-data', batteryData);
     });
     // Signal landed and flying events.
@@ -145,14 +145,12 @@ app.get('/list', function(req, res) {
 
 app.get('/field/:id', function(req, res) {
     id = req.params.id;
-    doConvert(fieldData[id].coordinates);
-
     res.sendFile(path.join(__dirname, 'views/field.html'));
 });
 
 io.on('connection', function(socket) {
     io.emit('fields-data', fieldData);
-    io.emit('battery-data',batteryData);
+    io.emit('battery-data', batteryData);
     sendState();
     socket.on('create-testdata', function(data) {
         myData = data;
@@ -165,33 +163,33 @@ io.on('connection', function(socket) {
 
     socket.on('disconnect', function() {});
 
-    socket.on('start-button', function (data) {
-
-        for(var i=0; i<fieldData.length; i++){
+    socket.on('start-button', function(data) {
+        var job;
+        for (var i = 0; i < fieldData.length; i++) {
             var job = fieldData[i]
-            if(job.id == data){
+            if (job.id == data) {
                 break;
             }
         }
 
-        var mavparser = new mavlink.MavParser(job.coordinates,'mavlink/flightplan',1);
+        var mavparser = new mavLink.MavParser(job.coordinates, 'mavlink/flightplan', 1);
         mavparser.startparse();
 
-        client.connect(function () {
+        client.connect(function() {
             client.upload(['mavlink/flightplan.mavlink'], '/internal_000/flightplans', {
                 baseDir: 'mavlink',
                 overwrite: 'all'
-            }, function (result) {
+            }, function(result) {
                 console.log(result);
             });
         });
-        
-        readyToFly = true;
+
+        readyToFly = false;
     });
-    
-    socket.on('stop-button', function (data) {
-      console.log("!!!!!!!!! WE GOT EMERGENCY!!! ABORT SHIP!!!!")
-      drone.emergency();
+
+    socket.on('stop-button', function(data) {
+        console.log("!!!!!!!!! WE GOT EMERGENCY!!! ABORT SHIP!!!!")
+        drone.emergency();
     });
 
 });
@@ -213,17 +211,16 @@ new CronJob("*/5 * * * * *", function() {
             if (fieldData.length != jsonObject.length) {
                 console.log("DEBUG: sending new field list to socket!");
                 fieldData = jsonObject;
-                fileIO.writeFile('jobs.json', JSON.stringify(fieldData),function(err){
-                  if(err) return console.log(err);
+                fileIO.writeFile('jobs.json', JSON.stringify(fieldData), function(err) {
+                    if (err) return console.log(err);
                 })
                 io.emit('fields-data', fieldData);
             }
-        }
-        else {
-          fileIO.readFile('jobs.json','utf8', function(err,data){
-            if (err) return console.log(err);
-            fieldData = JSON.parse(data);
-          })
+        } else {
+            fileIO.readFile('jobs.json', 'utf8', function(err, data) {
+                if (err) return console.log(err);
+                fieldData = JSON.parse(data);
+            })
         }
     })
 }, null, true);
