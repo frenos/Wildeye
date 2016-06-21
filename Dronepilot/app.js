@@ -136,6 +136,11 @@ io.on('connection', function(socket) {
         console.log("Got connect-drone...");
     });
 
+    socket.on('start-button', function(data){
+        console.log("got buttonevent from job "+data);
+    });
+
+
     socket.on('disconnect', function() {});
 });
 
