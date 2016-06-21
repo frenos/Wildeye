@@ -2,8 +2,6 @@
  * Created by Rene on 17.06.16.
  */
 
-
-
 var ftpClient = require('ftp-client'),
     config = {
         host: '192.168.42.1',
@@ -21,7 +19,7 @@ client.connect(function () {
 
     client.upload(['../mavlink/flightplan.mavlink'], '/internal_000/flightplans', {
         baseDir: '../mavlink',
-        overwrite: 'older'
+        overwrite: 'all'
     }, function (result) {
         console.log(result);
     });

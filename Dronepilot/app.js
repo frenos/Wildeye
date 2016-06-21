@@ -8,9 +8,24 @@ var config = require('./config.js');
 var request = require('request');
 var atob = require('atob');
 var fileIO = require("fs");
+
 var ftpClient = require('ftp-client');
 var mavLink = require('./MavFileGen/mavparser');
 console.log(mavLink);
+
+var ftpClient = require('ftp-client'),
+    config = {
+        host: '192.168.42.1',
+        port: 21,
+        user: 'anonymous',
+        password: 'anonymous@'
+    },
+    options = {
+        logging: 'basic'
+    },
+    client = new ftpClient(config, options);
+
+>>>>>>> b0aba2b2da18760347df30901db1394dd462cbfd
 var bebop = require('node-bebop')
 var drone = bebop.createClient();
 var CronJob = require('cron').CronJob;
@@ -55,7 +70,7 @@ if (fakedata == true) {
 
 drone.connect(function() {
 
-    drone.MediaStreaming.videoEnable(1);
+    //drone.MediaStreaming.videoEnable(1);
     //Signal on Batterychange
     drone.on('battery', function(data) {
         console.log("DEBUG sending battery: "+data+" %...");
@@ -141,6 +156,28 @@ io.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function() {});
+
+    socket.on('start-button', function (data) {
+
+        for(var i=0; i<fieldData.length; i++){
+            var job = fieldData[i]
+            if(job.id == data){
+                break;
+            }
+        }
+
+        //var mavparser = new MavParser(job.coordinates,'flightplan',1);
+        //mavparser.start();
+
+        client.connect(function () {
+            client.upload(['../mavlink/flightplan.mavlink'], '/internal_000/flightplans', {
+                baseDir: '../mavlink',
+                overwrite: 'all'
+            }, function (result) {
+                console.log(result);
+            });
+        });
+    });
 });
 
 function sendState() {
