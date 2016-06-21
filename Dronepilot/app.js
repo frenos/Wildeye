@@ -8,6 +8,7 @@ var config = require('./config.js');
 var request = require('request');
 var atob = require('atob');
 var fileIO = require("fs");
+var ftpClient = require('ftp-client');
 
 var bebop = require('node-bebop')
 var drone = bebop.createClient();
