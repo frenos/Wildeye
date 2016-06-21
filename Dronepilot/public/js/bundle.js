@@ -1877,7 +1877,10 @@ var vm = new Vue({
         jobId = pathArray[pathArray.length-1];
         console.log("sending jobid "+jobId);
         socket.emit('start-button', jobId);
-      }
+      },
+      stopBtn: function(event){
+        socket.emit('stop-button', jobId);
+      },
     }
 });
 
