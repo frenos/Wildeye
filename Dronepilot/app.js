@@ -189,8 +189,13 @@ io.on('connection', function(socket) {
     });
 
     socket.on('stop-button', function(data) {
-        console.log("!!!!!!!!! WE GOT EMERGENCY!!! ABORT SHIP!!!!")
+        console.log("!!!!!!!!! WE GOT EMERGENCY!!! ABORT SHIP!!!!");
         drone.emergency();
+    });
+
+    socket.on('land-button', function (data) {
+        console.log("SMOOOTH BABY ;D");
+        drone.Piloting.landing();
     });
 
 });
