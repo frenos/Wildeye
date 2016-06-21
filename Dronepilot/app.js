@@ -7,6 +7,7 @@ var path = require('path');
 var config = require('./config.js');
 var request = require('request');
 var atob = require('atob');
+var fileIO = require("fs");
 
 var bebop = require('node-bebop')
 var drone = bebop.createClient();
@@ -155,8 +156,17 @@ new CronJob("*/5 * * * * *", function() {
             if (fieldData.length != jsonObject.length) {
                 console.log("DEBUG: sending new field list to socket!");
                 fieldData = jsonObject;
+                fileIO.writeFile('jobs.json', JSON.stringify(fieldData),function(err){
+                  if(err) return console.log(err);
+                })
                 io.emit('fields-data', fieldData);
             }
+        }
+        else {
+          fileIO.readFile('jobs.json','utf8', function(err,data){
+            if (err) return console.log(err);
+            fieldData = JSON.parse(data);
+          })
         }
     })
 }, null, true);
