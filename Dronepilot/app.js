@@ -115,11 +115,19 @@ drone.connect(function() {
         console.log('sending video data');
         io.emit('video-data', data.toString('base64'));
     });
+
+    drone.on("AvailabilityStateChanged", function(data) {
+        console.log("AvailabilityStateChanged", data);
+        if (data.AvailabilityState === 1 && readyToFly) {
+            readyToFly = false;
+            drone.Mavlink.start("/data/ftp/internal_000/flightplans/flightPlan.mavlink", 0);
+        }
+    });
 });
 
 var myData = {};
 var fieldData = {};
-
+var readyToFly = true;
 var stateData = 'Ready';
 var batteryData = 0;
 
@@ -177,6 +185,8 @@ io.on('connection', function(socket) {
                 console.log(result);
             });
         });
+        
+        readyToFly = true;
     });
     
     socket.on('stop-button', function (data) {
