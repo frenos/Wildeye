@@ -166,18 +166,19 @@ io.on('connection', function(socket) {
             }
         }
 
-        //var mavparser = new MavParser(job.coordinates,'flightplan',1);
-        //mavparser.start();
+        var mavparser = new mavlink.MavParser(job.coordinates,'mavlink/flightplan',1);
+        mavparser.startparse();
 
         client.connect(function () {
-            client.upload(['../mavlink/flightplan.mavlink'], '/internal_000/flightplans', {
-                baseDir: '../mavlink',
+            client.upload(['mavlink/flightplan.mavlink'], '/internal_000/flightplans', {
+                baseDir: 'mavlink',
                 overwrite: 'all'
             }, function (result) {
                 console.log(result);
             });
         });
     });
+    
     socket.on('stop-button', function (data) {
       console.log("!!!!!!!!! WE GOT EMERGENCY!!! ABORT SHIP!!!!")
       drone.emergency();
