@@ -99,9 +99,9 @@ exports.MavParser = function(coordinates, filename, altitude, jobname) {
 };
 exports.MavParser.prototype.genMavLinkwaypointObj = function() {
   var waypoint_ar = this.coordinates;
-  var waypointobj = exports.MAV_CMD.MAV_CMD_NAV_WAYPOINT;
   var value = [];
   for (var i = 0; i < waypoint_ar.length; i++) {
+    var waypointobj = JSON.parse(JSON.stringify(exports.MAV_CMD.MAV_CMD_NAV_WAYPOINT));
     value = this.objectValues(waypoint_ar[i]);
     waypointobj.lat = value[0];
     waypointobj.long = value[1];
@@ -109,7 +109,7 @@ exports.MavParser.prototype.genMavLinkwaypointObj = function() {
   }
   this.mavLand.lat = value[0];
   this.mavLand.long = value[1];
-  //console.log(this.mavWayPoints);
+  console.log(this.mavWayPoints);
 
 };
 exports.MavParser.prototype.startparse = function() {
